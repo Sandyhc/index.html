@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>College Voting</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f2f2f2;
+      text-align: center;
+      padding: 50px;
+    }
+    .card {
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      width: 300px;
+      margin: auto;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+    }
+    button {
+      margin: 10px;
+      padding: 10px 20px;
+      border: none;
+      background: #4CAF50;
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button.no {
+      background: #f44336;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>Kal college kaun kaun aayega?</h2>
+    <button onclick="vote('Yes')">Yes</button>
+    <button class="no" onclick="vote('No')">No</button>
+    <p id="thanks" style="margin-top:20px;"></p>
+  </div>
+
+  <script>
+    function vote(answer) {
+      document.getElementById('thanks').innerText = `Thank you! You selected: ${answer}`;
+      // Yahan aap backend ya Google Sheet jod ke vote store bhi kar sakte ho
+    }
+  </script>
+</body>
+</html>
