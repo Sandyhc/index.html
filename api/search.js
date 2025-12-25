@@ -8,10 +8,26 @@ export default function handler(req, res) {
     });
   }
 
-  res.status(200).json({
-    success: true,
-    type,
-    value,
-    message: "API successfully running on Vercel"
+  if (type === "number") {
+    return res.status(200).json({
+      success: true,
+      type,
+      value,
+      message: "Mobile number API working"
+    });
+  }
+
+  if (type === "aadhaar") {
+    return res.status(200).json({
+      success: true,
+      type,
+      value,
+      message: "Aadhaar API working (demo)"
+    });
+  }
+
+  return res.status(400).json({
+    success: false,
+    error: "Invalid type"
   });
 }
