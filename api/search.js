@@ -1,76 +1,27 @@
-// -------- DEMO DATA GENERATOR --------
-function generateDemoRecords(count = 1000) {
-  const records = [];
+// api/osint.js
+import { VercelRequest, VercelResponse } from '@vercel/node';
+import fetch from 'node-fetch'; // Polyfill might be needed depending on environment
 
-  for (let i = 1; i <= count; i++) {
-    const mobile = "9" + String(100000000 + i).slice(0, 9);
-    const altMobile = "8" + String(200000000 + i).slice(0, 9);
-    const idNumber = String(100000000000 + i);
+export default async function (request, response) {
+  const { domain } = request.query;
 
-    records.push({
-      id: i,
-      mobile: mobile,
-      name: `DEMO USER ${i}`,
-      father_name: `DEMO FATHER ${i}`,
-      address: `Demo Address Line ${i}, Demo Area, Demo City, Demo State, 000000`,
-      alt_mobile: altMobile,
-      circle: "DEMO NETWORK",
-      id_number: idNumber,
-      email: `demo${i}@example.com`
-    });
+  if (!domain) {
+    return response.status(400).send('Missing domain parameter');
   }
 
-  return records;
-}
-
-// generate once
-const DEMO_DB = generateDemoRecords(1000);
-
-// -------- API HANDLER --------
-export default function handler(req, res) {
-  const { type, value } = req.query;
-
-  if (!type || !value) {
-    return res.status(400).json({
-      success: false,
-      error: "Missing type or value"
-    });
-  }
-
-  // -------- MOBILE SEARCH --------
-  if (type === "number") {
-    if (!/^\d{10}$/.test(value)) {
-      return res.status(400).json({
-        success: false,
-        error: "Invalid mobile number"
-      });
+  try {
+    // Example OSINT data fetch (using a hypothetical public API)
+    const apiResponse = await fetch(`api.example-osint.com{encodeURIComponent(domain)}`);
+    
+    if (!apiResponse.ok) {
+      throw new Error('Failed to fetch data from external OSINT API');
     }
 
-    const result = DEMO_DB.filter(r => r.mobile === value);
-
-    return res.status(200).json(
-      result.length ? result : []
-    );
+    const data = await apiResponse.json();
+    response.status(200).json(data);
+    
+  } catch (error) {
+    console.error(error);
+    response.status(500).send('Error during OSINT data retrieval');
   }
-
-  // -------- ID / AADHAAR SEARCH --------
-  if (type === "aadhaar") {
-    if (!/^\d{12}$/.test(value)) {
-      return res.status(400).json({
-        success: false,
-        error: "Invalid ID number"
-      });
-    }
-
-    const result = DEMO_DB.filter(r => r.id_number === value);
-
-    return res.status(200).json(
-      result.length ? result : []
-    );
-  }
-
-  return res.status(400).json({
-    success: false,
-    error: "Invalid search type"
-  });
 }
